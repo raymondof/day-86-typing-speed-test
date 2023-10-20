@@ -3,6 +3,7 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 
+# Create the main Tkinter window
 root = Tk()
 root.title("Typing speed test")
 root.geometry("430x275")
@@ -16,9 +17,11 @@ text_field = Text(mainframe, width=50, height=12)#, padx=20)
 text_field.grid(column=0, row=1, columnspan=4)
 
 # Set time value and IntVar for displaying the time
-time_value = 6
+time_value = 60
 time_left = IntVar(mainframe)
 time_left.set(time_value)
+
+# set variable for the countdown timer that avoids starting more than 1 timer
 current_countdown = None
 
 # Words Per Minute
@@ -29,55 +32,46 @@ WPM.set(0)
 CPM = IntVar()
 CPM.set(0)
 
-# Variable to keep track if the user is typing in the text field
-typing = False
-
 
 def reset_timer():
-    global typing, current_countdown
+    """Function for resetting current timer"""
+    global current_countdown
     time_left.set(time_value)
 
+    # Normalises the text field, allowing to type or edit (delete in this case)
     text_field["state"] = 'normal'
     text_field.delete("1.0", "end")
-    typing = False
-    if current_countdown != None:
+    if current_countdown is not None:
         mainframe.after_cancel(current_countdown)
         current_countdown = None
 
 
 def countdown(count):
+    """Performs countdown for given time (seconds)"""
     global current_countdown
     if count > -1:
         time_left.set(count)
         current_countdown = mainframe.after(1000, countdown, count-1)
         count_words()
+    # Disables the text field
     if count == 0:
         text_field["state"] = 'disabled'
 
 
-def start_timer():
-    if current_countdown:
-        # if countdown already running, cancel it
-        mainframe.after_cancel(current_countdown)
-
-    time_left.set(time_value)
-    countdown(time_left.get())
-
-
-def on_typing(event):
-    global typing
-    #if text_field.get("1.0", "end") and not current_countdown:
+def start_by_typing(event):
+    """Starts countdown by typing."""
     if not current_countdown:
-        typing = True
-        start_timer()
-    else:
-        typing = False
+        time_left.set(time_value)
+        countdown(time_left.get())
 
 
 def count_words():
+    """Counts the words and characters in the text_field and updates their status in the UI."""
     text = text_field.get("1.0", "end")
     words_in_text = len(text.split(" "))
     characters_in_text = len(text)
+
+    # otherwise starts with 1
     if words_in_text == 1:
         WPM.set(0)
         CPM.set(0)
@@ -100,10 +94,8 @@ ttk.Label(mainframe, textvariable=CPM).grid(column=3, row=2, sticky=W)
 reset_button = tkinter.Button(mainframe, width=8, text="Reset timer", command=reset_timer)
 reset_button.grid(column=2, row=0, sticky=W, padx=20)
 
-
 # Bind events to the text_field
-text_field.bind("<KeyRelease>", on_typing)
-#text_field.bind("<KeyRelease>", start_timer)
+text_field.bind("<KeyRelease>", start_by_typing)
 
 
 root.mainloop()
