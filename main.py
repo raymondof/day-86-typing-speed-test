@@ -12,7 +12,7 @@ mainframe = ttk.Frame(root)
 mainframe.grid(column=0, row=0, padx=10, pady=10)
 
 # Set text field
-text_field = Text(mainframe, width=50, height=12)#, padx=20)
+text_field = Text(mainframe, width=50, height=12)
 text_field.grid(column=0, row=1, columnspan=4)
 
 # Set time value and IntVar for displaying the time
@@ -59,6 +59,7 @@ def countdown(count):
 
 def start_by_typing(event):
     """Starts countdown by typing."""
+    # Starts timer in case it is not running already
     if not current_countdown:
         time_left.set(time_value)
         countdown(time_left.get())
