@@ -12,6 +12,10 @@ mainframe = ttk.Frame(root)
 mainframe.grid(column=0, row=0, padx=10, pady=10)
 time_value = 6
 
+# Set text field
+text_field = Text(mainframe, width=50, height=10)
+text_field.grid(column=0, row=1, columnspan=4)
+
 time_left = IntVar(mainframe)
 time_left.set(time_value)
 
@@ -24,16 +28,34 @@ CPM.set(0)
 first_round = True
 def reset_timer():
     time_left.set(time_value)
+    text_field.delete("1.0", "end")
+    #text_field.set
 
 def countdown(count):
     if count > -1:
         time_left.set(count)
         mainframe.after(1000, countdown, count-1)
-        print(count)
+        #print(count)
+        count_words()
+    elif count == 0:
+        text_field["state"] = "disabled"
 
 def start_timer():
     time_left.set(time_value)
+    text_field.delete("1.0", "end")
     countdown(time_left.get())
+
+
+def count_words():
+    text = text_field.get("1.0", "end")
+    words_in_text = len(text.split(" "))
+    characters_in_text = len(text)
+    if words_in_text == 1:
+        WPM.set(0)
+        CPM.set(0)
+    else:
+        WPM.set(words_in_text)
+        CPM.set(characters_in_text)
 
 # Set labels
 ttk.Label(mainframe, text="Time: ").grid(column=0, row=0, sticky=E, padx=10)
@@ -52,7 +74,6 @@ reset_button.grid(column=2, row=0, sticky=W, padx=20)
 start_button = tkinter.Button(mainframe, width=8, text="Start", command=start_timer)
 start_button.grid(column=3, row=0, sticky=W, padx=20)
 
-# Set text field
-text_field = Text(mainframe, width=50, height=10).grid(column=0, row=1, columnspan=4)
+
 
 root.mainloop()
