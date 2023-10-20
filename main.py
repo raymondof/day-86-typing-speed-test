@@ -1,4 +1,3 @@
-import time
 import tkinter
 from tkinter import *
 from tkinter import ttk
@@ -96,6 +95,5 @@ reset_button.grid(column=2, row=0, sticky=W, padx=20)
 
 # Bind events to the text_field
 text_field.bind("<KeyRelease>", start_by_typing)
-
 
 root.mainloop()
